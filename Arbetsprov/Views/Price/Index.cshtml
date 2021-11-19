@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+<table class="table table-striped">
+    <tr>
+        <th>
+            Exempeldata-tabell
+        </th>
+    </tr>
+    <tbody>
+        <tr>
+            <th>PriceValueId</th>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>CatalogEntryCode</th>
+            <th>MarketId</th>
+            <th>CurrencyCod</th>
+            <th>ValidFrom</th>
+            <th>ValidUntil</th>
+            <th>UnitPrice</th>
+        </tr>
+        @foreach (var item in ViewBag.PriceList)
+        {
+            <tr>
+                <td>@item.PriceValueId</td>
+                <td>@item.Created</td>
+                <td>@item.Modified</td>
+                <td>@item.CatalogEntryCode</td>
+                <td>@item.MarketId</td>
+                <td>@item.CurrencyCode</td>
+                <td>@item.ValidFrom</td>
+                <td>@item.ValidUntil</td>
+                <td>@item.UnitPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
