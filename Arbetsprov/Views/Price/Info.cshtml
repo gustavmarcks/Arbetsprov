@@ -5,6 +5,7 @@
 
 <link href="~/Content/bootstrap.css" rel="stylesheet" />
 
+
 <table class="table table-striped">
     <tr>
         <th>
@@ -13,25 +14,40 @@
     </tr>
     <tbody>
         <tr>
-            <th>ID</th>
             <th>Marknad</th>
             <th>Pris</th>
             <th>Valuta</th>
             <th>Start</th>
             <th>Slut</th>
         </tr>
-        @foreach (var item in ViewBag.pList)
+
+        @if (ViewBag.plist != null)
         {
-            <tr>
-                <td>@item.PriceValueId</td>
-                <td>@item.MarketId</td>
-                <td>@item.MarketId</td>
-                <td>@item.UnitPrice</td>
-                <td>@item.CatalogEntryCode</td>
-                <td>@item.ValidFrom</td>
-                <td>@item.ValidUntil</td>
-                <td>@item.MarketId</td>
-            </tr>
+            foreach (var item in ViewBag.plist)
+            {
+                <tr>
+                    <td>@item.MarketId</td>
+                    <td>@item.UnitPrice</td>
+                    <td>@item.CatalogEntryCode</td>
+                    <td>@item.ValidFrom</td>
+                    <td>@item.ValidUntil</td>
+                    <td>@item.UnitPrice</td>
+                </tr>
+            }
         }
+        else
+        {
+            <tr>Artikeln finns inte</tr>
+        }
+
+
+
     </tbody>
 </table>
+
+
+
+
+
+
+
