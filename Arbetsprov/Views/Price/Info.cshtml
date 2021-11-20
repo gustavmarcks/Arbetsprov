@@ -22,9 +22,9 @@
             <th>Slut</th>
         </tr>
 
-       @if (ViewBag.PriceInfoList != null)
+       @if (Model != null)
         {
-            foreach (var item in ViewBag.PriceInfoList)
+            foreach (var item in Model)
             {
                 <tr>
                     <td>@item.PriceValueId</td>

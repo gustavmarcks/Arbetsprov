@@ -24,13 +24,12 @@
             <th>UnitPrice</th>
         </tr>   
 
-       @foreach (var item in ViewBag.PriceList)
+       @foreach (var item in Model)
         {
             <tr>
                 <td>@item.PriceValueId</td>
                 <td>@item.Created</td>
                 <td>@item.Modified</td>
-
                 <td>@item.CatalogEntryCode</td>
                 <td>@item.MarketId</td>
                 <td>@item.CurrencyCode</td>

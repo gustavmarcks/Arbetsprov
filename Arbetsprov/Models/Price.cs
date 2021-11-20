@@ -7,6 +7,7 @@ using System.Web;
 namespace Arbetsprov.Models
 {
     //Klass för artiklar och priser
+    //Klassvariabler 
     public class Price
     {
         public int PriceValueId { get; set; }

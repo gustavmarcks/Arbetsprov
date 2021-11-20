@@ -12,9 +12,9 @@ namespace Arbetsprov.Controllers
 {
     public class PriceController : Controller
     {
-        //Listor med priser
+        //Lista med priser
         public static List<Price> pricelist = new List<Price>();
-        public static HashSet<Price> priceinfolist = new HashSet<Price>();
+        public static List<Price> priceinfolist = new List<Price>();
 
         //Koppling till databas
         static readonly SqlConnection sqlconn = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DB;Integrated Security=True;");
@@ -22,14 +22,19 @@ namespace Arbetsprov.Controllers
         //SQL query från databasen
         static readonly SqlCommand sqlcmd = new SqlCommand("SELECT * FROM dbo.Price", sqlconn);
 
+        //Metod som skickar värde till vy Index 
         public ActionResult Index()
         {
+            //Öppnar connection till SQL
             sqlconn.Open();
+
+            //Skapar en datareader
             SqlDataReader sqlrdr = sqlcmd.ExecuteReader();
                     
-            //Sätter värden från databas till lista
+            //Läser databas med hjälp av datareader
             while (sqlrdr.Read())
             {
+                //Nytt objekt av klassen Price
                 var price = new Price
                 {
                     PriceValueId = int.Parse(sqlrdr["PriceValueId"].ToString()),
@@ -42,21 +47,28 @@ namespace Arbetsprov.Controllers
                     ValidUntil = DateTime.Parse(sqlrdr["ValidUntil"].ToString()),
                     UnitPrice = decimal.Parse(sqlrdr["UnitPrice"].ToString())
                 };
+                //Adderar objekten till listan 
                 pricelist.Add(price);
-                ViewBag.PriceList = pricelist;
             }
+            //Stänger connection till sql efter att data är hämtat
             sqlconn.Close();
-            return View();   
+
+            //Returnerar data från listan pricelist till vy View
+            return View(pricelist);   
         }
         //Inmatning av SKU i adressfält
         [Route("{pricecode}")]
+
+        //Metod som skickar värde till vy Info
         public ActionResult Info(string pricecode)
         {
+            //Loopar igenom samtiga artiklar i prislistan
             foreach (var item in pricelist)
             {
-                //Jämförelse
+                //Jämför datum och CatalogEntryCode som matades in i adressfält
                 if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                 {
+                    //Sätter värden på nytt objekt om if-satsen gick igenom 
                     _ = new Price
                     {
                         PriceValueId = item.PriceValueId,
@@ -69,15 +81,17 @@ namespace Arbetsprov.Controllers
                         ValidUntil = item.ValidUntil,
                         UnitPrice = item.UnitPrice
                     };
+                    //Adderar objekten till listan som gick igenom if-satsen
                     priceinfolist.Add(item);
                 }
+                //Om if-sats ej går igenom fortsätter loopen och börjar om med nya värden från listan pricelist
                 else
                 {
                    continue;
                 }                       
-            }                               
-            ViewBag.PriceInfoList = priceinfolist;                       
-            return View();
+            }
+            //Returnerar data från listan priceinfolist till vy Info
+            return View(priceinfolist);
         }                      
     }   
 }
