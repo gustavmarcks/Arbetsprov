@@ -75,7 +75,8 @@ namespace Arbetsprov.Controllers
 
                     foreach (var item in priceinfolist)
                     {
-                        if (item.CatalogEntryCode == pricecode)
+
+                        if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                         {
                             _ = new Price
                             {
