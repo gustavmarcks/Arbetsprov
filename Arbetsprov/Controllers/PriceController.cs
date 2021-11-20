@@ -27,6 +27,7 @@ namespace Arbetsprov.Controllers
             sqlconn.Open();
             SqlDataReader sqlrdr = sqlcmd.ExecuteReader();
                     
+            //Sätter värden från databas till lista
             while (sqlrdr.Read())
             {
                 var price = new Price
@@ -53,6 +54,7 @@ namespace Arbetsprov.Controllers
         {
             foreach (var item in pricelist)
             {
+                //Jämförelse
                 if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                 {
                     _ = new Price
@@ -72,8 +74,7 @@ namespace Arbetsprov.Controllers
                 else
                 {
                    continue;
-                }
-                       
+                }                       
             }                               
             ViewBag.PriceInfoList = priceinfolist;                       
             return View();

@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Arbetsprov.Models
 {
+    //Klass för artiklar och priser
     public class Price
     {
         public int PriceValueId { get; set; }
@@ -17,6 +18,5 @@ namespace Arbetsprov.Models
         public DateTime ValidFrom { get; set; }
         public DateTime ValidUntil { get; set; }
         public decimal UnitPrice { get; set; }
-        //public List<Price> PriceInfo { get; set; }
     }
 }
