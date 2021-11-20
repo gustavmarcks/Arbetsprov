@@ -5,7 +5,6 @@
 
 <link href="~/Content/bootstrap.css" rel="stylesheet" />
 
-
 <table class="table table-striped">
     <tr>
         <th>
@@ -14,6 +13,8 @@
     </tr>
     <tbody>
         <tr>
+            <th>ID</th>
+
             <th>Marknad</th>
             <th>Pris</th>
             <th>Valuta</th>
@@ -21,26 +22,25 @@
             <th>Slut</th>
         </tr>
 
-        @if (ViewBag.plist != null)
+       @if (ViewBag.PriceInfoList != null)
         {
-            foreach (var item in ViewBag.plist)
+            foreach (var item in ViewBag.PriceInfoList)
             {
                 <tr>
+                    <td>@item.PriceValueId</td>
+
                     <td>@item.MarketId</td>
                     <td>@item.UnitPrice</td>
-                    <td>@item.CatalogEntryCode</td>
+                    <td>@item.CurrencyCode</td>
                     <td>@item.ValidFrom</td>
                     <td>@item.ValidUntil</td>
-                    <td>@item.UnitPrice</td>
                 </tr>
             }
         }
         else
         {
-            <tr>Ingen aktuell artikel finns tillgänglig</tr>
+        <tr>Ingen aktuell artikel finns tillgänglig</tr>
         }
-
-
 
     </tbody>
 </table>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace Arbetsprov.Controllers
 {
     public class PriceController : Controller
     {
-        readonly List<Price> pricelist = new List<Price>();
-        public List<Price> priceinfolist = new List<Price>();
-        public List<Price> priceinfolist2 = new List<Price>();
+        //Listor med priser
+        public static List<Price> pricelist = new List<Price>();
+        public static HashSet<Price> priceinfolist = new HashSet<Price>();
 
         //Koppling till databas
         static readonly SqlConnection sqlconn = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DB;Integrated Security=True;");
@@ -37,67 +38,45 @@ namespace Arbetsprov.Controllers
                     MarketId = sqlrdr["MarketId"].ToString(),
                     CurrencyCode = sqlrdr["CurrencyCode"].ToString(),
                     ValidFrom = DateTime.Parse(sqlrdr["ValidFrom"].ToString()),
-                    //NULL??
                     ValidUntil = DateTime.Parse(sqlrdr["ValidUntil"].ToString()),
                     UnitPrice = decimal.Parse(sqlrdr["UnitPrice"].ToString())
                 };
                 pricelist.Add(price);
-                //priceinfolist.Add(price);
                 ViewBag.PriceList = pricelist;
             }
             sqlconn.Close();
             return View();   
         }
-    
+        //Inmatning av SKU i adressfält
         [Route("{pricecode}")]
-        [Route("Price/Info/{pricecode}")]
         public ActionResult Info(string pricecode)
         {
-            sqlconn.Open();
-            SqlDataReader rdr = sqlcmd.ExecuteReader();
+            foreach (var item in pricelist)
             {
-                while (rdr.Read())
+                if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                 {
-                    var price = new Price
+                    _ = new Price
                     {
-                        PriceValueId = int.Parse(rdr["PriceValueId"].ToString()),
-                        Created = DateTime.Parse(rdr["Created"].ToString()),
-                        Modified = DateTime.Parse(rdr["Modified"].ToString()),
-                        CatalogEntryCode = rdr["CatalogEntryCode"].ToString(),
-                        MarketId = rdr["MarketId"].ToString(),
-                        CurrencyCode = rdr["CurrencyCode"].ToString(),
-                        ValidFrom = DateTime.Parse(rdr["ValidFrom"].ToString()),
-                         //NULL??
-                        ValidUntil = DateTime.Parse(rdr["ValidUntil"].ToString()),
-                        UnitPrice = decimal.Parse(rdr["UnitPrice"].ToString())
+                        PriceValueId = item.PriceValueId,
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        CatalogEntryCode = item.CatalogEntryCode,
+                        MarketId = item.MarketId,
+                        CurrencyCode = item.CurrencyCode, 
+                        ValidFrom = item.ValidFrom,
+                        ValidUntil = item.ValidUntil,
+                        UnitPrice = item.UnitPrice
                     };
-                    priceinfolist.Add(price);
-
-                    foreach (var item in priceinfolist)
-                    {
-
-                        if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
-                        {
-                            _ = new Price
-                            {
-                                MarketId = item.MarketId,
-                                UnitPrice = item.UnitPrice,
-                                CurrencyCode = item.CurrencyCode,
-                                ValidFrom = item.ValidFrom,
-                                ValidUntil = item.ValidUntil
-                            };
-                            priceinfolist2.Add(item);
-                            ViewBag.plist = priceinfolist2;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }                
+                    priceinfolist.Add(item);
                 }
-                sqlconn.Close();
-                return View();
-            }
+                else
+                {
+                   continue;
+                }
+                       
+            }                               
+            ViewBag.PriceInfoList = priceinfolist;                       
+            return View();
         }                      
     }   
 }

@@ -17,5 +17,6 @@ namespace Arbetsprov.Models
         public DateTime ValidFrom { get; set; }
         public DateTime ValidUntil { get; set; }
         public decimal UnitPrice { get; set; }
+        //public List<Price> PriceInfo { get; set; }
     }
 }
