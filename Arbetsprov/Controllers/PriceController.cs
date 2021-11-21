@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Mvc.Html;
 using Arbetsprov.Models;
 
 namespace Arbetsprov.Controllers
@@ -66,7 +62,8 @@ namespace Arbetsprov.Controllers
             foreach (var item in pricelist)
             {
                 //Jämför datum och CatalogEntryCode som matades in i adressfält
-                if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
+                //!Hårdkodat värde för att endast ta ut svenska priser!
+                if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom && item.MarketId == "sv")
                 {
                     //Sätter värden på nytt objekt om if-satsen gick igenom 
                     _ = new Price
@@ -83,12 +80,7 @@ namespace Arbetsprov.Controllers
                     };
                     //Adderar objekten till listan som gick igenom if-satsen
                     priceinfolist.Add(item);
-                }
-                //Om if-sats ej går igenom fortsätter loopen och börjar om med nya värden från listan pricelist
-                else
-                {
-                   continue;
-                }                       
+                }                   
             }
             //Returnerar data från listan priceinfolist till vy Info
             return View(priceinfolist);
