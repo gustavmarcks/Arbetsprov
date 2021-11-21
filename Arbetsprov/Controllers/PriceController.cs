@@ -66,19 +66,6 @@ namespace Arbetsprov.Controllers
                 //Jämför datum och CatalogEntryCode som matades in i adressfält
                 if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                 {
-                    //Sätter värden på nytt objekt om if-satsen gick igenom 
-                    _ = new Price
-                    {
-                        PriceValueId = item.PriceValueId,
-                        Created = item.Created,
-                        Modified = item.Modified,
-                        CatalogEntryCode = item.CatalogEntryCode,
-                        MarketId = item.MarketId,
-                        CurrencyCode = item.CurrencyCode,
-                        ValidFrom = item.ValidFrom,
-                        ValidUntil = item.ValidUntil,
-                        UnitPrice = item.UnitPrice
-                    };
                     //Adderar objekten till listan som gick igenom if-satsen
                     sortedpricelist.Add(item);                 
                 }
