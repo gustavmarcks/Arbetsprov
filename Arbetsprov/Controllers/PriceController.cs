@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Web.Mvc;
 using Arbetsprov.Models;
+using System.Linq;
 
 namespace Arbetsprov.Controllers
 {
     public class PriceController : Controller
     {
         //Lista med priser
-        public static List<Price> pricelist = new List<Price>();
-        public static List<Price> priceinfolist = new List<Price>();
-
+        private static readonly List<Price> pricelist = new List<Price>();
+        private static readonly List<Price> sortedpricelist = new List<Price>();
+        private static readonly List<Price> priceinfolist = new List<Price>();
+        
         //Koppling till databas
         static readonly SqlConnection sqlconn = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DB;Integrated Security=True;");
 
@@ -26,7 +28,7 @@ namespace Arbetsprov.Controllers
 
             //Skapar en datareader
             SqlDataReader sqlrdr = sqlcmd.ExecuteReader();
-                    
+
             //Läser databas med hjälp av datareader
             while (sqlrdr.Read())
             {
@@ -50,7 +52,7 @@ namespace Arbetsprov.Controllers
             sqlconn.Close();
 
             //Returnerar data från listan pricelist till vy View
-            return View(pricelist);   
+            return View(pricelist);
         }
         //Inmatning av SKU i adressfält
         [Route("{pricecode}")]
@@ -62,8 +64,7 @@ namespace Arbetsprov.Controllers
             foreach (var item in pricelist)
             {
                 //Jämför datum och CatalogEntryCode som matades in i adressfält
-                //!Hårdkodat värde för att endast ta ut svenska priser!
-                if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom && item.MarketId == "sv")
+                if (item.CatalogEntryCode == pricecode && DateTime.Now < item.ValidUntil && DateTime.Now > item.ValidFrom)
                 {
                     //Sätter värden på nytt objekt om if-satsen gick igenom 
                     _ = new Price
@@ -73,17 +74,33 @@ namespace Arbetsprov.Controllers
                         Modified = item.Modified,
                         CatalogEntryCode = item.CatalogEntryCode,
                         MarketId = item.MarketId,
-                        CurrencyCode = item.CurrencyCode, 
+                        CurrencyCode = item.CurrencyCode,
                         ValidFrom = item.ValidFrom,
                         ValidUntil = item.ValidUntil,
                         UnitPrice = item.UnitPrice
                     };
                     //Adderar objekten till listan som gick igenom if-satsen
-                    priceinfolist.Add(item);
-                }                   
+                    sortedpricelist.Add(item);                 
+                }
+                //Fortsätter loop från början
+                else
+                {
+                    continue;
+                }
             }
+            //Minsta pris för jämföra priser i föregående lista
+            decimal minprice = sortedpricelist.Min(p => p.UnitPrice);
+
+            foreach (var item in sortedpricelist)
+            {
+                if (item.UnitPrice == minprice)
+                {
+                    priceinfolist.Add(item);
+                }
+            }
+
             //Returnerar data från listan priceinfolist till vy Info
             return View(priceinfolist);
-        }                      
-    }   
+        }
+    }
 }
